@@ -1,0 +1,161 @@
+#include "tsun_common/source.hpp"
+
+#include <cassert>
+#include <cctype>
+#include <print>
+#include <tsunc_frontend/lexer.hpp>
+#include <tsunc_frontend/token.hpp>
+#include <utility>
+
+namespace tsunc_frontend {
+    using keyword_pair = std::pair<std::string, keyword_token>;
+
+    const static std::array S_KEYWORD_PAIRS = {
+        keyword_pair{ "func", keyword_token::Func },
+
+        keyword_pair{ "int", keyword_token::Int },
+    };
+
+    using symbol_pair = std::pair<std::string, symbol_token>;
+
+    const static std::array S_SYMBOL_PAIRS = {
+        symbol_pair{ "->", symbol_token::Arrow },
+
+        symbol_pair{ "(", symbol_token::OpenParen }, symbol_pair{ ")", symbol_token::CloseParen },
+        symbol_pair{ "{", symbol_token::OpenCurly }, symbol_pair{ "}", symbol_token::CloseCurly },
+        symbol_pair{ ";", symbol_token::Colon },
+    };
+
+    auto lexer::ms_is_first_ident_character(char character) -> bool {
+        return std::isalpha(character) != 0 || character == '_';
+    }
+
+    auto lexer::ms_is_ident_character(char character) -> bool {
+        return std::isalnum(character) != 0 || character == '_';
+    }
+
+    auto lexer::m_try_lexing_keyword(const std::string &keyword) -> bool {
+        for (size_t i = 0; i < keyword.size(); ++i) {
+            if (!m_cursor.peek(i).has_value()) return false;
+            if (m_cursor.peek(i).value() != keyword.at(i)) return false;
+        }
+        if (!m_cursor.peek(keyword.size()).has_value()) return true;
+        return !ms_is_ident_character(m_cursor.peek(keyword.size()).value());
+    }
+
+    auto lexer::m_try_lexing_keywords() -> bool {
+        for (auto pair : S_KEYWORD_PAIRS) {
+            if (m_try_lexing_keyword(pair.first)) {
+                m_tokens.emplace_back(m_source_info, m_cursor.position(), pair.second);
+                m_cursor.consume(pair.first.size());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    auto lexer::m_try_lexing_symbol(const std::string &symbol) -> bool {
+        for (size_t i = 0; i < symbol.size(); ++i) {
+            if (!m_cursor.peek(i).has_value()) return false;
+            if (m_cursor.peek(i).value() != symbol.at(i)) return false;
+        }
+        return true;
+    }
+
+    auto lexer::m_try_lexing_symbols() -> bool {
+        for (auto pair : S_SYMBOL_PAIRS) {
+            if (m_try_lexing_symbol(pair.first)) {
+                m_tokens.emplace_back(m_source_info, m_cursor.position(), pair.second);
+                m_cursor.consume(pair.first.size());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    auto lexer::m_try_lexing_ident() -> bool {
+        tsun_common::source_location location = m_cursor.position();
+        std::string                  str;
+        if (!ms_is_first_ident_character(m_cursor.peek().value())) return false;
+
+        while (m_cursor.peek().has_value() && ms_is_ident_character(m_cursor.peek().value()))
+            str += m_cursor.consume();
+
+        m_tokens.emplace_back(m_source_info, location, ident_token{ str });
+
+        return true;
+    }
+
+    auto lexer::m_try_lexing_number() -> bool {
+        tsun_common::source_location location = m_cursor.position();
+        uint64_t                     value    = 0;
+
+        if (!m_cursor.peek().has_value() || std::isdigit(m_cursor.peek().value()) == 0) return false;
+
+        while (m_cursor.peek().has_value() && std::isdigit(m_cursor.peek().value()) != 0) {
+            value *= 10;
+            value += m_cursor.consume() - '0';
+        }
+
+        m_tokens.emplace_back(m_source_info, location, number_token{ value });
+
+        return true;
+    }
+
+    auto lexer::m_try_lexing_string() -> bool {
+        tsun_common::source_location location = m_cursor.position();
+        if (m_cursor.peek().value() != '"') return false;
+        m_cursor.consume();
+        std::string str;
+        while (m_cursor.peek().has_value() && m_cursor.peek().value() != '"') {
+            if (m_cursor.peek().value() == '\\') {
+                m_cursor.consume();
+                switch (m_cursor.peek().value()) {
+                case 'n': str += "\n"; break;
+                case 'r': str += "\r"; break;
+                case 't': str += "\t"; break;
+                case '\\': str += "\\"; break;
+                case '"': str += "\""; break;
+                default: break;
+                }
+                m_cursor.consume();
+            } else {
+                str += m_cursor.consume();
+            }
+        }
+        if (!m_cursor.peek().has_value()) {
+            m_tokens.emplace_back(m_source_info, location, unexpected_string_end_error_token{ str });
+            return true;
+        }
+        m_cursor.consume();
+        m_tokens.emplace_back(m_source_info, location, string_token{ str });
+        return true;
+    }
+
+    auto lexer::m_try_lexing() -> void {
+        if (std::isspace(static_cast<const unsigned char>(m_cursor.peek().value())) != 0) {
+            m_cursor.consume();
+            return;
+        }
+
+        if (m_try_lexing_keywords()) return;
+        if (m_try_lexing_symbols()) return;
+        if (m_try_lexing_ident()) return;
+        if (m_try_lexing_string()) return;
+        if (m_try_lexing_number()) return;
+
+        // invalid character
+        m_tokens.emplace_back(
+            m_source_info,
+            m_cursor.position(),
+            invalid_character_error_token{ m_cursor.peek().value() });
+        m_cursor.consume();
+    }
+
+    auto lexer::lex() -> void {
+        while (m_cursor.peek().has_value()) {
+            if (m_cursor.peek().value() == '\0') break;
+            m_try_lexing();
+        }
+    }
+}; // namespace tsunc_frontend
