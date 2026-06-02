@@ -24,6 +24,8 @@ namespace tsun_common {
     }
 
     memory_mapping::~memory_mapping() {
+#ifdef TSUN_COMMON_HAVE_MMAP_
         munmap(m_data, m_size);
+#endif
     }
 } // namespace tsun_common
