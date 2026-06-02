@@ -16,7 +16,7 @@ TEST_P(LexerTestingFixture, LexerTest) {
 
     auto expected_it = expected_tokens.begin();
     auto token       = lexer.next_token();
-    
+
     for (; expected_it != expected_tokens.end() && token.has_value(); ++expected_it, token = lexer.next_token()) {
         EXPECT_EQ(*expected_it, token.value());
     }

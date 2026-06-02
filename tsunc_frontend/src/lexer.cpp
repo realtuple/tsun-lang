@@ -126,10 +126,11 @@ namespace tsunc_frontend {
     }
 
     auto lexer::next_token() -> std::optional<token> {
-        while (m_cursor.peek().has_value() && std::isspace(static_cast<const unsigned char>(m_cursor.peek().value())) != 0) {
+        while (m_cursor.peek().has_value() &&
+               std::isspace(static_cast<const unsigned char>(m_cursor.peek().value())) != 0) {
             m_cursor.consume();
-        }    
- 
+        }
+
         if (!m_cursor.peek().has_value()) return {};
         if (m_cursor.peek() == '\0') return {};
 
