@@ -1,7 +1,12 @@
-#ifndef TSUNC_FRONTEND__LEXER_HPP__
-#define TSUNC_FRONTEND__LEXER_HPP__
+#ifndef TSUNC_FRONTEND_LEXER_HPP_
+#define TSUNC_FRONTEND_LEXER_HPP_
 
+#include <array>
+#include <cstddef>
+#include <optional>
+#include <span>
 #include <stack>
+#include <string>
 #include <tsun_common/cursor.hpp>
 #include <tsun_common/source.hpp>
 #include <tsunc_frontend/token.hpp>
@@ -45,11 +50,11 @@ namespace tsunc_frontend {
             }
 
             auto consume(size_t range) -> std::span<const char> {
-                size_t orignal_pos = m_cursor.position();
+                const size_t ORIGNAL_POS = m_cursor.position();
                 for (size_t i = 0; i < range; ++i) {
                     consume();
                 }
-                return m_cursor.data().subspan(orignal_pos, range);
+                return m_cursor.data().subspan(ORIGNAL_POS, range);
             }
 
             auto rewind() -> char {

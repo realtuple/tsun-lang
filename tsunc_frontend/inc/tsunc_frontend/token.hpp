@@ -1,8 +1,12 @@
-#ifndef TSUNC_FRONTEND__TOKEN_HPP__
-#define TSUNC_FRONTEND__TOKEN_HPP__
+#ifndef TSUNC_FRONTEND_TOKEN_HPP_
+#define TSUNC_FRONTEND_TOKEN_HPP_
 
+#include <cstddef>
+#include <cstdint>
 #include <format>
 #include <ostream>
+#include <string>
+#include <string_view>
 #include <tsun_common/source.hpp>
 #include <utility>
 #include <variant>
@@ -145,33 +149,35 @@ namespace tsunc_frontend {
 
 } // namespace tsunc_frontend
 
-template <>
-struct std::formatter<tsunc_frontend::token_v> {
-    template <class parse_context>
-    constexpr auto parse(parse_context &ctx) {
-        return ctx.begin();
-    }
+namespace std {
+    template <>
+    struct formatter<tsunc_frontend::token_v> {
+        template <class parse_context>
+        constexpr auto parse(parse_context &ctx) {
+            return ctx.begin();
+        }
 
-    template <class fmt_context>
-    auto format(const tsunc_frontend::token_v &token, fmt_context &ctx) const {
-        return std::format_to(
-            ctx.out(),
-            "{} {}",
-            tsunc_frontend::get_token_v_type_string(token),
-            std::visit([](auto &&arg) -> std::string { return tsunc_frontend::to_string(arg); }, token));
-    }
-};
+        template <class fmt_context>
+        auto format(const tsunc_frontend::token_v &token, fmt_context &ctx) const {
+            return std::format_to(
+                ctx.out(),
+                "{} {}",
+                tsunc_frontend::get_token_v_type_string(token),
+                std::visit([](auto &&arg) -> std::string { return tsunc_frontend::to_string(arg); }, token));
+        }
+    };
 
-template <>
-struct std::formatter<tsunc_frontend::token> {
-    template <class parse_context>
-    constexpr auto parse(parse_context &ctx) {
-        return ctx.begin();
-    }
+    template <>
+    struct formatter<tsunc_frontend::token> {
+        template <class parse_context>
+        constexpr auto parse(parse_context &ctx) {
+            return ctx.begin();
+        }
 
-    template <class fmt_context>
-    auto format(tsunc_frontend::token token, fmt_context &ctx) const {
-        return std::format_to(ctx.out(), "{}:{}: {}", token.source_info.source_name, token.location, token.value);
-    }
-};
+        template <class fmt_context>
+        auto format(tsunc_frontend::token token, fmt_context &ctx) const {
+            return std::format_to(ctx.out(), "{}:{}: {}", token.source_info.source_name, token.location, token.value);
+        }
+    };
+} // namespace std
 #endif

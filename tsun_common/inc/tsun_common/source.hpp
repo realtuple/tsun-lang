@@ -1,9 +1,12 @@
-#ifndef TSUN_COMMON__SOURCE_HPP__
-#define TSUN_COMMON__SOURCE_HPP__
+#ifndef TSUN_COMMON_SOURCE_HPP_
+#define TSUN_COMMON_SOURCE_HPP_
 
+#include <algorithm>
 #include <cstddef>
 #include <format>
 #include <sstream>
+#include <string_view>
+#include <utility>
 
 namespace tsun_common {
     struct source_info {
@@ -29,55 +32,59 @@ namespace tsun_common {
     };
 } // namespace tsun_common
 
-template <>
-struct std::formatter<tsun_common::source_location> {
-    bool print_offset = false;
-    bool print_row    = true;
-    bool print_column = true;
+namespace std {
 
-    template <class parse_context>
-    constexpr auto parse(parse_context &ctx) {
-        auto iterator = ctx.begin();
-        if (iterator == ctx.end() || *iterator == '}') return iterator;
+    template <>
+    struct formatter<tsun_common::source_location> {
+        bool print_offset = false;
+        bool print_row    = true;
+        bool print_column = true;
 
-        print_row    = false;
-        print_column = false;
+        template <class parse_context>
+        constexpr auto parse(parse_context &ctx) {
+            auto iterator = ctx.begin();
+            if (iterator == ctx.end() || *iterator == '}') return iterator;
 
-        // Yes, I COULD rewrite this as for loop but it is okay as while loop
-        while (iterator != ctx.end() && *iterator != '}') {
-            switch (*iterator) {
-            case 'o': print_offset = true; break;
-            case 'r': print_row = true; break;
-            case 'c': print_column = true; break;
-            default: throw std::format_error("Invalid format args for token_v");
+            print_row    = false;
+            print_column = false;
+
+            // Yes, I COULD rewrite this as for loop but it is okay as while loop
+            while (iterator != ctx.end() && *iterator != '}') {
+                switch (*iterator) {
+                case 'o': print_offset = true; break;
+                case 'r': print_row = true; break;
+                case 'c': print_column = true; break;
+                default: throw std::format_error("Invalid format args for token_v");
+                }
+                ++iterator;
             }
-            ++iterator;
-        }
-    exit_loop:
-        return iterator;
-    }
-
-    template <class fmt_context>
-    auto format(tsun_common::source_location source_location, fmt_context &ctx) const {
-        std::ostringstream oss;
-
-        if (print_row) {
-            oss << source_location.row;
+        exit_loop:
+            return iterator;
         }
 
-        if (print_column) {
-            if (print_row) oss << ":";
-            oss << source_location.column;
+        template <class fmt_context>
+        auto format(tsun_common::source_location source_location, fmt_context &ctx) const {
+            std::ostringstream oss;
+
+            if (print_row) {
+                oss << source_location.row;
+            }
+
+            if (print_column) {
+                if (print_row) oss << ":";
+                oss << source_location.column;
+            }
+
+            if (print_offset) {
+                if (print_row || print_column) oss << " ";
+
+                oss << "(offset " << source_location.offset << ")";
+            }
+
+            return std::ranges::copy(std::move(oss).str(), ctx.out()).out;
         }
+    };
 
-        if (print_offset) {
-            if (print_row || print_column) oss << " ";
-
-            oss << "(offset " << source_location.offset << ")";
-        }
-
-        return std::ranges::copy(std::move(oss).str(), ctx.out()).out;
-    }
-};
+} // namespace std
 
 #endif

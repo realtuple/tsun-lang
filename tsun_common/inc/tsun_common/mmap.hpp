@@ -1,5 +1,5 @@
-#ifndef TSUN_COMMON__MMAP_HPP__
-#define TSUN_COMMON__MMAP_HPP__
+#ifndef TSUN_COMMON_MMAP_HPP_
+#define TSUN_COMMON_MMAP_HPP_
 
 #include <cstddef>
 #include <span>

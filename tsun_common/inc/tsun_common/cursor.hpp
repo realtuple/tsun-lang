@@ -1,6 +1,7 @@
-#ifndef TSUN_COMMON__CURSOR_HPP__
-#define TSUN_COMMON__CURSOR_HPP__
+#ifndef TSUN_COMMON_CURSOR_HPP_
+#define TSUN_COMMON_CURSOR_HPP_
 
+#include <cstddef>
 #include <functional>
 #include <optional>
 #include <span>
@@ -31,8 +32,8 @@ namespace tsun_common {
 
         [[nodiscard]] auto is_valid_rewind_range(size_t range) const -> bool { return m_pos >= range; }
 
-        auto peek(size_t offset = 0) const -> std::optional<std::reference_wrapper<const T>> {
-            if (m_span.size() == 0) return {};
+        [[nodiscard]] auto peek(size_t offset = 0) const -> std::optional<std::reference_wrapper<const T>> {
+            if (m_span.empty()) return {};
             if (offset + m_pos == m_span.size()) return {};
             return std::cref(m_span.at(m_pos + offset));
         }
