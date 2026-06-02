@@ -1,0 +1,28 @@
+#ifndef TSUN_COMMON__MMAP_HPP__
+#define TSUN_COMMON__MMAP_HPP__
+
+#include <cstddef>
+#include <span>
+#include <string_view>
+
+namespace tsun_common {
+    struct data;
+
+    class memory_mapping final {
+    private:
+        char       *m_data;
+        std::size_t m_size;
+    public:
+        memory_mapping(const memory_mapping &)                     = delete;
+        memory_mapping(memory_mapping &&)                          = delete;
+        auto operator=(const memory_mapping &) -> memory_mapping & = delete;
+        auto operator=(memory_mapping &&) -> memory_mapping &      = delete;
+
+        memory_mapping(const std::string_view &filename);
+        ~memory_mapping();
+
+        auto data() -> std::span<const char> { return { m_data, m_size }; }
+    };
+} // namespace tsun_common
+
+#endif
