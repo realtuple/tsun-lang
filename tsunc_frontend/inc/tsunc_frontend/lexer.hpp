@@ -76,22 +76,20 @@ namespace tsunc_frontend {
 
         cursor_wrapper m_cursor;
 
-        std::vector<token> m_tokens;
-
         static auto ms_is_first_ident_character(char character) -> bool;
         static auto ms_is_ident_character(char character) -> bool;
 
         auto m_try_lexing_keyword(const std::string &keyword) -> bool;
-        auto m_try_lexing_keywords() -> bool;
+        auto m_try_lexing_keywords() -> std::optional<token>;
 
         auto m_try_lexing_symbol(const std::string &symbol) -> bool;
-        auto m_try_lexing_symbols() -> bool;
+        auto m_try_lexing_symbols() -> std::optional<token>;
 
-        auto m_try_lexing_ident() -> bool;
+        auto m_try_lexing_ident() -> std::optional<token>;
 
-        auto m_try_lexing_number() -> bool;
+        auto m_try_lexing_number() -> std::optional<token>;
 
-        auto m_try_lexing_string() -> bool;
+        auto m_try_lexing_string() -> std::optional<token>;
 
         auto m_try_lexing() -> void;
     public:
@@ -103,8 +101,7 @@ namespace tsunc_frontend {
         lexer(tsun_common::source_info source_info, const std::array<char, N> &code)
           : m_source_info(source_info), m_cursor(code) {}
 
-        auto lex() -> void;
-        auto tokens() -> const std::vector<token> & { return m_tokens; };
+        auto next_token() -> std::optional<token>;
     };
 } // namespace tsunc_frontend
 

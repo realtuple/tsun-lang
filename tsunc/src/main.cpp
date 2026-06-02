@@ -11,9 +11,8 @@ auto main(int argc, const char **argv) -> int {
     tsun_common::memory_mapping mmap{ args.at(1) };
 
     tsunc_frontend::lexer lexer{ std::string_view{ args.at(1), std::strlen(args.at(1)) }, mmap.data() };
-    lexer.lex();
 
-    for (auto token : lexer.tokens()) {
-        std::println("{}", token);
+    while (auto token = lexer.next_token()) {
+        std::println("{}", token.value());
     }
 }

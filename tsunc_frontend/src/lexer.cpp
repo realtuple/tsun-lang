@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <cctype>
-#include <print>
 #include <tsunc_frontend/lexer.hpp>
 #include <tsunc_frontend/token.hpp>
 #include <utility>
@@ -43,15 +42,15 @@ namespace tsunc_frontend {
         return !ms_is_ident_character(m_cursor.peek(keyword.size()).value());
     }
 
-    auto lexer::m_try_lexing_keywords() -> bool {
+    auto lexer::m_try_lexing_keywords() -> std::optional<token> {
         for (auto pair : S_KEYWORD_PAIRS) {
             if (m_try_lexing_keyword(pair.first)) {
-                m_tokens.emplace_back(m_source_info, m_cursor.position(), pair.second);
+                token token = { m_source_info, m_cursor.position(), pair.second };
                 m_cursor.consume(pair.first.size());
-                return true;
+                return token;
             }
         }
-        return false;
+        return {};
     }
 
     auto lexer::m_try_lexing_symbol(const std::string &symbol) -> bool {
@@ -62,49 +61,45 @@ namespace tsunc_frontend {
         return true;
     }
 
-    auto lexer::m_try_lexing_symbols() -> bool {
+    auto lexer::m_try_lexing_symbols() -> std::optional<token> {
         for (auto pair : S_SYMBOL_PAIRS) {
             if (m_try_lexing_symbol(pair.first)) {
-                m_tokens.emplace_back(m_source_info, m_cursor.position(), pair.second);
+                token token = { m_source_info, m_cursor.position(), pair.second };
                 m_cursor.consume(pair.first.size());
-                return true;
+                return token;
             }
         }
-        return false;
+        return {};
     }
 
-    auto lexer::m_try_lexing_ident() -> bool {
+    auto lexer::m_try_lexing_ident() -> std::optional<token> {
         tsun_common::source_location location = m_cursor.position();
         std::string                  str;
-        if (!ms_is_first_ident_character(m_cursor.peek().value())) return false;
+        if (!ms_is_first_ident_character(m_cursor.peek().value())) return {};
 
         while (m_cursor.peek().has_value() && ms_is_ident_character(m_cursor.peek().value()))
             str += m_cursor.consume();
 
-        m_tokens.emplace_back(m_source_info, location, ident_token{ str });
-
-        return true;
+        return { { m_source_info, location, ident_token{ str } } };
     }
 
-    auto lexer::m_try_lexing_number() -> bool {
+    auto lexer::m_try_lexing_number() -> std::optional<token> {
         tsun_common::source_location location = m_cursor.position();
         uint64_t                     value    = 0;
 
-        if (!m_cursor.peek().has_value() || std::isdigit(m_cursor.peek().value()) == 0) return false;
+        if (!m_cursor.peek().has_value() || std::isdigit(m_cursor.peek().value()) == 0) return {};
 
         while (m_cursor.peek().has_value() && std::isdigit(m_cursor.peek().value()) != 0) {
             value *= 10;
             value += m_cursor.consume() - '0';
         }
 
-        m_tokens.emplace_back(m_source_info, location, number_token{ value });
-
-        return true;
+        return { { m_source_info, location, number_token{ value } } };
     }
 
-    auto lexer::m_try_lexing_string() -> bool {
+    auto lexer::m_try_lexing_string() -> std::optional<token> {
         tsun_common::source_location location = m_cursor.position();
-        if (m_cursor.peek().value() != '"') return false;
+        if (m_cursor.peek().value() != '"') return {};
         m_cursor.consume();
         std::string str;
         while (m_cursor.peek().has_value() && m_cursor.peek().value() != '"') {
@@ -124,38 +119,30 @@ namespace tsunc_frontend {
             }
         }
         if (!m_cursor.peek().has_value()) {
-            m_tokens.emplace_back(m_source_info, location, unexpected_string_end_error_token{ str });
-            return true;
+            return { { m_source_info, location, unexpected_string_end_error_token{ str } } };
         }
         m_cursor.consume();
-        m_tokens.emplace_back(m_source_info, location, string_token{ str });
-        return true;
+        return { { m_source_info, location, string_token{ str } } };
     }
 
-    auto lexer::m_try_lexing() -> void {
-        if (std::isspace(static_cast<const unsigned char>(m_cursor.peek().value())) != 0) {
+    auto lexer::next_token() -> std::optional<token> {
+        while (m_cursor.peek().has_value() && std::isspace(static_cast<const unsigned char>(m_cursor.peek().value())) != 0) {
             m_cursor.consume();
-            return;
-        }
+        }    
+ 
+        if (!m_cursor.peek().has_value()) return {};
+        if (m_cursor.peek() == '\0') return {};
 
-        if (m_try_lexing_keywords()) return;
-        if (m_try_lexing_symbols()) return;
-        if (m_try_lexing_ident()) return;
-        if (m_try_lexing_string()) return;
-        if (m_try_lexing_number()) return;
+        if (auto token = m_try_lexing_keywords()) return token;
+        if (auto token = m_try_lexing_symbols()) return token;
+        if (auto token = m_try_lexing_ident()) return token;
+        if (auto token = m_try_lexing_string()) return token;
+        if (auto token = m_try_lexing_number()) return token;
 
         // invalid character
-        m_tokens.emplace_back(
-            m_source_info,
-            m_cursor.position(),
-            invalid_character_error_token{ m_cursor.peek().value() });
+        token token = { m_source_info, m_cursor.position(), invalid_character_error_token{ m_cursor.peek().value() } };
         m_cursor.consume();
+        return token;
     }
 
-    auto lexer::lex() -> void {
-        while (m_cursor.peek().has_value()) {
-            if (m_cursor.peek().value() == '\0') break;
-            m_try_lexing();
-        }
-    }
 }; // namespace tsunc_frontend

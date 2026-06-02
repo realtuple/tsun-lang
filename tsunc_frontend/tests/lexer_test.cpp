@@ -13,13 +13,15 @@ TEST_P(LexerTestingFixture, LexerTest) {
     auto [code, expected_tokens] = GetParam();
 
     tsunc_frontend::lexer lexer{ { "<TEST>" }, code };
-    lexer.lex();
 
-    EXPECT_EQ(lexer.tokens().size(), expected_tokens.size());
-
-    for (size_t i = 0; i < lexer.tokens().size(); ++i) {
-        EXPECT_EQ(lexer.tokens().at(i), expected_tokens.at(i));
+    auto expected_it = expected_tokens.begin();
+    auto token       = lexer.next_token();
+    
+    for (; expected_it != expected_tokens.end() && token.has_value(); ++expected_it, token = lexer.next_token()) {
+        EXPECT_EQ(*expected_it, token.value());
     }
+
+    EXPECT_TRUE(expected_it == expected_tokens.end() && !token.has_value());
 }
 
 INSTANTIATE_TEST_SUITE_P(
