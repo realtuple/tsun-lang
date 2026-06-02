@@ -1,0 +1,17 @@
+#!/bin/env bash
+
+set -e
+
+echo "Checking if commit name is conventional..."
+
+commit_msg_file="$1"
+first_line=$(head -n 1 "$commit_msg_file")
+
+regex='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([\w.-]+\))?!?: .+'
+
+if [[ ! "$first_line" =~ $regex ]]; then
+    echo "conventional commit check failed."
+    exit 1
+fi
+
+echo "commit-msg checks passed"
