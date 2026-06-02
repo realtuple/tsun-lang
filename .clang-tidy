@@ -1,0 +1,80 @@
+---
+Checks: >
+  -*,
+  bugprone-*,
+  performance-*,
+  modernize-*,
+  readability-*,
+  cppcoreguidelines-*,
+  portability-*,
+  misc-*,
+
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -bugprone-easily-swappable-parameters,
+  -misc-non-private-member-variables-in-classes,
+  -cppcoreguidelines-non-private-member-variables-in-classes
+
+WarningsAsErrors: "*"
+
+HeaderFilterRegex: ".*"
+
+CheckOptions:
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: 3
+
+  - key: readability-identifier-length.MinimumParameterNameLength
+    value: 2
+
+  - key: readability-identifier-length.MinimumVariableNameLength
+    value: 2
+
+  # Namespaces
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  # Types
+  - key: readability-identifier-naming.ClassCase
+    value: lower_case
+  - key: readability-identifier-naming.StructCase
+    value: lower_case
+  - key: readability-identifier-naming.EnumCase
+    value: lower_case
+
+  # Functions
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+
+  # Variables
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+
+  # Public members
+  - key: readability-identifier-naming.PublicMemberCase
+    value: lower_case
+
+  # Protected members
+  - key: readability-identifier-naming.ProtectedMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.ProtectedMemberPrefix
+    value: p_
+
+  # Private members
+  - key: readability-identifier-naming.PrivateMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.PrivateMemberPrefix
+    value: m_
+
+  # Static members
+  - key: readability-identifier-naming.StaticVariableCase
+    value: lower_case
+  - key: readability-identifier-naming.StaticVariablePrefix
+    value: s_
+
+  # Constants
+  - key: readability-identifier-naming.ConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.StaticConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase

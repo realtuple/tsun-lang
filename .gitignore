@@ -1,0 +1,7 @@
+build*/
+.vscode/
+.cache/
+
+compile_commands.json
+# personal file that i made for configuring cloc
+excludes.txt
