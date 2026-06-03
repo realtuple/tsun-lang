@@ -7,10 +7,10 @@ include(CheckSymbolExists)
 # mmap tests
 check_symbol_exists(mmap "sys/mman.h" TSUN_COMMON_HAVE_MMAP)
 
-if (TSUN_COMMON_MMAP_DETECTED)
+if (TSUN_COMMON_HAVE_MMAP)
     target_compile_definitions(tsun_common PRIVATE TSUN_COMMON_HAVE_MMAP_)
 else()
-    message(FINAL_ERROR "Platform not supported")
+    message(FATAL_ERROR "Platform not supported")
 endif()
 
 set(TSUN_TESTING_LIBRARIES tsun_common)
