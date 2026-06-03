@@ -8,6 +8,8 @@ namespace tsunc_frontend {
     auto to_string(keyword_token token) -> std::string {
         switch (token) {
         case keyword_token::Func: return "func";
+        case keyword_token::Let: return "let";
+        case keyword_token::Const: return "const";
         case keyword_token::Int: return "int";
         default: throw std::invalid_argument{ "invalid keyword_token value" };
         }
@@ -21,6 +23,12 @@ namespace tsunc_frontend {
         case symbol_token::CloseCurly: return "}";
         case symbol_token::Arrow: return "->";
         case symbol_token::Semicolon: return ";";
+        case symbol_token::Colon: return ":";
+        case symbol_token::Assign: return "=";
+        case symbol_token::Plus: return "+";
+        case symbol_token::Minus: return "-";
+        case symbol_token::Mult: return "*";
+        case symbol_token::Divide: return "/";
         default: throw std::invalid_argument{ "invalid symbol_token value" };
         }
     }

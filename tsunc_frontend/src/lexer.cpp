@@ -17,9 +17,12 @@ namespace tsunc_frontend {
     using keyword_pair = std::pair<std::string, keyword_token>;
 
     constexpr static std::array S_KEYWORD_PAIRS = {
+        keyword_pair{ "const", keyword_token::Const },
+
         keyword_pair{ "func", keyword_token::Func },
 
         keyword_pair{ "int", keyword_token::Int },
+        keyword_pair{ "let", keyword_token::Let },
     };
 
     using symbol_pair = std::pair<std::string, symbol_token>;
@@ -29,7 +32,10 @@ namespace tsunc_frontend {
 
         symbol_pair{ "(", symbol_token::OpenParen }, symbol_pair{ ")", symbol_token::CloseParen },
         symbol_pair{ "{", symbol_token::OpenCurly }, symbol_pair{ "}", symbol_token::CloseCurly },
-        symbol_pair{ ";", symbol_token::Semicolon },
+        symbol_pair{ ";", symbol_token::Semicolon }, symbol_pair{ ":", symbol_token::Colon },
+        symbol_pair{ "=", symbol_token::Assign },    symbol_pair{ "+", symbol_token::Plus },
+        symbol_pair{ "-", symbol_token::Minus },     symbol_pair{ "*", symbol_token::Mult },
+        symbol_pair{ "/", symbol_token::Divide }
     };
 
     auto lexer::ms_is_first_ident_character(char character) -> bool {

@@ -13,8 +13,10 @@
 
 namespace tsunc_frontend {
     enum class keyword_token : std::uint8_t {
-        Func, // func
-        Int,  // int
+        Func,  // func
+        Let,   // let
+        Const, // const
+        Int,   // int
     };
 
     auto to_string(keyword_token token) -> std::string;
@@ -26,6 +28,12 @@ namespace tsunc_frontend {
         CloseCurly, // }
         Arrow,      // ->
         Semicolon,  // ;
+        Colon,      // :
+        Assign,     // =
+        Plus,       // +
+        Minus,      // -
+        Mult,       // *
+        Divide,     // /
     };
 
     auto to_string(symbol_token token) -> std::string;

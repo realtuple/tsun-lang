@@ -36,15 +36,19 @@ INSTANTIATE_TEST_SUITE_P(
     KeywordTests,
     LexerTestingFixture,
     testing::Values(lexer_case(
-        "func int",
-        { tsunc_frontend::token{ "<TEST>", 0, 1, 1, tsunc_frontend::keyword_token::Func },
-          tsunc_frontend::token{ "<TEST>", 5, 1, 6, tsunc_frontend::keyword_token::Int } })));
+        "func int let const",
+        {
+            tsunc_frontend::token{ "<TEST>", 0, 1, 1, tsunc_frontend::keyword_token::Func },
+            tsunc_frontend::token{ "<TEST>", 5, 1, 6, tsunc_frontend::keyword_token::Int },
+            tsunc_frontend::token{ "<TEST>", 9, 1, 10, tsunc_frontend::keyword_token::Let },
+            tsunc_frontend::token{ "<TEST>", 13, 1, 14, tsunc_frontend::keyword_token::Const },
+        })));
 
 INSTANTIATE_TEST_SUITE_P(
     SymbolsTests,
     LexerTestingFixture,
     testing::Values(lexer_case(
-        "-> ;{}()",
+        "-> ;{}():=+-*/",
         {
             tsunc_frontend::token{ "<TEST>", 0, 1, 1, tsunc_frontend::symbol_token::Arrow },
             tsunc_frontend::token{ "<TEST>", 3, 1, 4, tsunc_frontend::symbol_token::Semicolon },
@@ -52,6 +56,12 @@ INSTANTIATE_TEST_SUITE_P(
             tsunc_frontend::token{ "<TEST>", 5, 1, 6, tsunc_frontend::symbol_token::CloseCurly },
             tsunc_frontend::token{ "<TEST>", 6, 1, 7, tsunc_frontend::symbol_token::OpenParen },
             tsunc_frontend::token{ "<TEST>", 7, 1, 8, tsunc_frontend::symbol_token::CloseParen },
+            tsunc_frontend::token{ "<TEST>", 8, 1, 9, tsunc_frontend::symbol_token::Colon },
+            tsunc_frontend::token{ "<TEST>", 9, 1, 10, tsunc_frontend::symbol_token::Assign },
+            tsunc_frontend::token{ "<TEST>", 10, 1, 11, tsunc_frontend::symbol_token::Plus },
+            tsunc_frontend::token{ "<TEST>", 11, 1, 12, tsunc_frontend::symbol_token::Minus },
+            tsunc_frontend::token{ "<TEST>", 12, 1, 13, tsunc_frontend::symbol_token::Mult },
+            tsunc_frontend::token{ "<TEST>", 13, 1, 14, tsunc_frontend::symbol_token::Divide },
         })));
 
 INSTANTIATE_TEST_SUITE_P(
