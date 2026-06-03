@@ -46,9 +46,9 @@ namespace tsun_common {
         auto consume(size_t range) -> std::span<T> {
             if (!is_valid_offset(range)) throw std::range_error{ "can't move past last element" };
 
-            size_t start = m_pos;
-            m_pos       += range;
-            return m_span.subspan(start, range);
+            const size_t START = m_pos;
+            m_pos             += range;
+            return m_span.subspan(START, range);
         }
 
         auto rewind() -> T {
