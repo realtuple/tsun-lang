@@ -138,10 +138,29 @@ namespace tsunc_frontend {
         return { { m_source_info, LOCATION, string_token{ str } } };
     }
 
+    auto lexer::m_try_handling_oneline_comment() -> bool {
+        if (!m_cursor.peek().has_value() || m_cursor.peek().value() != '/') return false;
+        if (!m_cursor.peek(1).has_value() || m_cursor.peek(1).value() != '/') return false;
+
+        while (m_cursor.peek().has_value() && m_cursor.peek().value() != '\n') {
+            m_cursor.consume();
+        }
+
+        if (m_cursor.peek().has_value()) m_cursor.consume();
+
+        return true;
+    }
+
     auto lexer::next_token() -> std::optional<token> {
         while (m_cursor.peek().has_value() &&
                std::isspace(static_cast<const unsigned char>(m_cursor.peek().value())) != 0) {
             m_cursor.consume();
+        }
+
+        bool had_comments = true;
+        while (had_comments) {
+            had_comments  = false;
+            had_comments |= m_try_handling_oneline_comment();
         }
 
         if (!m_cursor.peek().has_value()) return {};

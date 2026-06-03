@@ -96,6 +96,8 @@ namespace tsunc_frontend {
 
         auto m_try_lexing_string() -> std::optional<token>;
 
+        auto m_try_handling_oneline_comment() -> bool;
+
         auto m_try_lexing() -> void;
     public:
         lexer(tsun_common::source_info source_info, std::span<const char> code)

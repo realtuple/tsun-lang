@@ -30,7 +30,12 @@ TEST_P(LexerTestingFixture, LexerTest) {
 INSTANTIATE_TEST_SUITE_P(
     EmptyTests,
     LexerTestingFixture,
-    testing::Values(lexer_case("", {}), lexer_case(" ", {}), lexer_case("\t", {}), lexer_case("\n", {})));
+    testing::Values(
+        lexer_case("", {}),
+        lexer_case(" ", {}),
+        lexer_case("\t", {}),
+        lexer_case("\n", {}),
+        lexer_case("// test comment", {})));
 
 INSTANTIATE_TEST_SUITE_P(
     KeywordTests,
