@@ -13,7 +13,7 @@ Checks: >
   -readability-magic-numbers,
   -bugprone-easily-swappable-parameters,
   -misc-non-private-member-variables-in-classes,
-  -cppcoreguidelines-non-private-member-variables-in-classes
+  -cppcoreguidelines-non-private-member-variables-in-classes,
   -bugprone-std-namespace-modification
 
 WarningsAsErrors: "*"
