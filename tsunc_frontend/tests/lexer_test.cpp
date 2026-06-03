@@ -47,7 +47,7 @@ INSTANTIATE_TEST_SUITE_P(
         "-> ;{}()",
         {
             tsunc_frontend::token{ "<TEST>", 0, 1, 1, tsunc_frontend::symbol_token::Arrow },
-            tsunc_frontend::token{ "<TEST>", 3, 1, 4, tsunc_frontend::symbol_token::Colon },
+            tsunc_frontend::token{ "<TEST>", 3, 1, 4, tsunc_frontend::symbol_token::Semicolon },
             tsunc_frontend::token{ "<TEST>", 4, 1, 5, tsunc_frontend::symbol_token::OpenCurly },
             tsunc_frontend::token{ "<TEST>", 5, 1, 6, tsunc_frontend::symbol_token::CloseCurly },
             tsunc_frontend::token{ "<TEST>", 6, 1, 7, tsunc_frontend::symbol_token::OpenParen },

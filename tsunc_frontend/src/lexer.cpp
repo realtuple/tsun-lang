@@ -29,7 +29,7 @@ namespace tsunc_frontend {
 
         symbol_pair{ "(", symbol_token::OpenParen }, symbol_pair{ ")", symbol_token::CloseParen },
         symbol_pair{ "{", symbol_token::OpenCurly }, symbol_pair{ "}", symbol_token::CloseCurly },
-        symbol_pair{ ";", symbol_token::Colon },
+        symbol_pair{ ";", symbol_token::Semicolon },
     };
 
     auto lexer::ms_is_first_ident_character(char character) -> bool {

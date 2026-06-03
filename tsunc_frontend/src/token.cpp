@@ -20,7 +20,7 @@ namespace tsunc_frontend {
         case symbol_token::OpenCurly: return "{";
         case symbol_token::CloseCurly: return "}";
         case symbol_token::Arrow: return "->";
-        case symbol_token::Colon: return ";";
+        case symbol_token::Semicolon: return ";";
         default: throw std::invalid_argument{ "invalid symbol_token value" };
         }
     }
