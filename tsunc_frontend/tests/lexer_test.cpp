@@ -2,6 +2,9 @@
 #include "tsunc_frontend/token.hpp"
 
 #include "gtest/gtest.h"
+#include <cstdint>
+#include <string>
+#include <utility>
 #include <vector>
 
 using lexer_case = std::pair<std::string, std::vector<tsunc_frontend::token>>;

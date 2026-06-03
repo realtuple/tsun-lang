@@ -1,24 +1,26 @@
 #include <algorithm>
+#include <array>
 #include <gtest/gtest.h>
+#include <span>
 #include <stdexcept>
 #include <tsun_common/cursor.hpp>
 
 TEST(CursorTest, PeekingTest) {
-    std::array               arr{ 1, 2, 3, 4, 5 };
-    tsun_common::cursor<int> cursor{ std::span<int>{ arr } };
+    const std::array                     ARR{ 1, 2, 3, 4, 5 };
+    const tsun_common::cursor<const int> CURSOR{ std::span<const int>{ ARR } };
 
-    EXPECT_EQ(cursor.peek(), cursor.peek(0));
+    EXPECT_EQ(CURSOR.peek(), CURSOR.peek(0));
 
-    EXPECT_EQ(cursor.peek(), 1);
-    EXPECT_EQ(cursor.peek(1), 2);
-    EXPECT_EQ(cursor.peek(2), 3);
-    EXPECT_EQ(cursor.peek(3), 4);
-    EXPECT_EQ(cursor.peek(4), 5);
+    EXPECT_EQ(CURSOR.peek(), 1);
+    EXPECT_EQ(CURSOR.peek(1), 2);
+    EXPECT_EQ(CURSOR.peek(2), 3);
+    EXPECT_EQ(CURSOR.peek(3), 4);
+    EXPECT_EQ(CURSOR.peek(4), 5);
 }
 
 TEST(CursorTest, ConsumeTest) {
-    std::array               arr{ 1, 2, 3, 4, 5 };
-    tsun_common::cursor<int> cursor{ std::span<int>{ arr } };
+    const std::array               ARR{ 1, 2, 3, 4, 5 };
+    tsun_common::cursor<const int> cursor{ std::span<const int>{ ARR } };
 
     EXPECT_EQ(cursor.position(), 0);
 
@@ -42,8 +44,8 @@ TEST(CursorTest, ConsumeTest) {
 }
 
 TEST(CursorTest, RewindTest) {
-    std::array               arr{ 1, 2, 3, 4, 5 };
-    tsun_common::cursor<int> cursor{ std::span<int>{ arr } };
+    const std::array               ARR{ 1, 2, 3, 4, 5 };
+    tsun_common::cursor<const int> cursor{ std::span<const int>{ ARR } };
 
     EXPECT_FALSE(cursor.is_valid_rewind_range(1));
     EXPECT_THROW(cursor.rewind(), std::range_error);
