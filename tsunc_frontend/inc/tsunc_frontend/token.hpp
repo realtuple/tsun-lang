@@ -20,12 +20,12 @@ namespace tsunc_frontend {
     auto to_string(keyword_token token) -> std::string;
 
     enum class symbol_token : std::uint8_t {
-        OpenParen,
-        CloseParen,
-        OpenCurly,
-        CloseCurly,
-        Arrow,
-        Semicolon
+        OpenParen,  // (
+        CloseParen, // )
+        OpenCurly,  // {
+        CloseCurly, // }
+        Arrow,      // ->
+        Semicolon,  // ;
     };
 
     auto to_string(symbol_token token) -> std::string;
