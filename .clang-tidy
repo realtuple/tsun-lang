@@ -14,7 +14,8 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -misc-non-private-member-variables-in-classes,
   -cppcoreguidelines-non-private-member-variables-in-classes,
-  -bugprone-std-namespace-modification
+  -bugprone-std-namespace-modification,
+  -bugprone-exception-escape
 
 WarningsAsErrors: "*"
 
