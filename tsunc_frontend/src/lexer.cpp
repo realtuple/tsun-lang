@@ -1,7 +1,14 @@
+// NOLINTBEGIN(bugprone-unchecked-optional-access)
+
 #include "tsun_common/source.hpp"
 
+#include <array>
 #include <cassert>
 #include <cctype>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <string>
 #include <tsunc_frontend/lexer.hpp>
 #include <tsunc_frontend/token.hpp>
 #include <utility>
@@ -9,7 +16,7 @@
 namespace tsunc_frontend {
     using keyword_pair = std::pair<std::string, keyword_token>;
 
-    const static std::array S_KEYWORD_PAIRS = {
+    constexpr static std::array S_KEYWORD_PAIRS = {
         keyword_pair{ "func", keyword_token::Func },
 
         keyword_pair{ "int", keyword_token::Int },
@@ -17,7 +24,7 @@ namespace tsunc_frontend {
 
     using symbol_pair = std::pair<std::string, symbol_token>;
 
-    const static std::array S_SYMBOL_PAIRS = {
+    constexpr static std::array S_SYMBOL_PAIRS = {
         symbol_pair{ "->", symbol_token::Arrow },
 
         symbol_pair{ "(", symbol_token::OpenParen }, symbol_pair{ ")", symbol_token::CloseParen },
@@ -73,19 +80,19 @@ namespace tsunc_frontend {
     }
 
     auto lexer::m_try_lexing_ident() -> std::optional<token> {
-        tsun_common::source_location location = m_cursor.position();
-        std::string                  str;
+        const tsun_common::source_location LOCATION = m_cursor.position();
+        std::string                        str;
         if (!ms_is_first_ident_character(m_cursor.peek().value())) return {};
 
         while (m_cursor.peek().has_value() && ms_is_ident_character(m_cursor.peek().value()))
             str += m_cursor.consume();
 
-        return { { m_source_info, location, ident_token{ str } } };
+        return { { m_source_info, LOCATION, ident_token{ str } } };
     }
 
     auto lexer::m_try_lexing_number() -> std::optional<token> {
-        tsun_common::source_location location = m_cursor.position();
-        uint64_t                     value    = 0;
+        const tsun_common::source_location LOCATION = m_cursor.position();
+        uint64_t                           value    = 0;
 
         if (!m_cursor.peek().has_value() || std::isdigit(m_cursor.peek().value()) == 0) return {};
 
@@ -94,11 +101,11 @@ namespace tsunc_frontend {
             value += m_cursor.consume() - '0';
         }
 
-        return { { m_source_info, location, number_token{ value } } };
+        return { { m_source_info, LOCATION, number_token{ value } } };
     }
 
     auto lexer::m_try_lexing_string() -> std::optional<token> {
-        tsun_common::source_location location = m_cursor.position();
+        const tsun_common::source_location LOCATION = m_cursor.position();
         if (m_cursor.peek().value() != '"') return {};
         m_cursor.consume();
         std::string str;
@@ -119,10 +126,10 @@ namespace tsunc_frontend {
             }
         }
         if (!m_cursor.peek().has_value()) {
-            return { { m_source_info, location, unexpected_string_end_error_token{ str } } };
+            return { { m_source_info, LOCATION, unexpected_string_end_error_token{ str } } };
         }
         m_cursor.consume();
-        return { { m_source_info, location, string_token{ str } } };
+        return { { m_source_info, LOCATION, string_token{ str } } };
     }
 
     auto lexer::next_token() -> std::optional<token> {
@@ -147,3 +154,5 @@ namespace tsunc_frontend {
     }
 
 }; // namespace tsunc_frontend
+
+// NOLINTEND(bugprone-unchecked-optional-access)

@@ -56,6 +56,9 @@ namespace std {
                 case 'c': print_column = true; break;
                 default: throw std::format_error("Invalid format args for token_v");
                 }
+
+                // some compilers define std::formatter parse_context iterator as const char *
+                // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
                 ++iterator;
             }
         exit_loop:

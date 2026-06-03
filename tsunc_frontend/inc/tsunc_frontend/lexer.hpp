@@ -35,7 +35,7 @@ namespace tsunc_frontend {
 
             auto is_valid_rewind_range(size_t range) { return m_cursor.is_valid_rewind_range(range); }
 
-            auto peek(size_t offset = 0) { return m_cursor.peek(offset); }
+            [[nodiscard]] auto peek(size_t offset = 0) const { return m_cursor.peek(offset); }
 
             auto consume() {
                 auto value = m_cursor.consume();

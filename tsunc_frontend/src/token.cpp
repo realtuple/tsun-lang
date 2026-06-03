@@ -1,4 +1,8 @@
+#include <format>
+#include <ostream>
+#include <string>
 #include <tsunc_frontend/token.hpp>
+#include <variant>
 
 namespace tsunc_frontend {
     auto to_string(keyword_token token) -> std::string {
