@@ -13,10 +13,10 @@ namespace tsun_common {
         char       *m_data;
         std::size_t m_size;
     public:
-        memory_mapping(const memory_mapping &)                     = delete;
-        memory_mapping(memory_mapping &&)                          = delete;
+        memory_mapping(const memory_mapping &) = delete;
+        memory_mapping(memory_mapping &&old) noexcept;
         auto operator=(const memory_mapping &) -> memory_mapping & = delete;
-        auto operator=(memory_mapping &&) -> memory_mapping &      = delete;
+        auto operator=(memory_mapping &&old) noexcept -> memory_mapping &;
 
         memory_mapping(const std::string_view &filename);
         ~memory_mapping();

@@ -13,6 +13,22 @@
 #endif
 
 namespace tsun_common {
+    memory_mapping::memory_mapping(memory_mapping &&old) noexcept
+      : m_data(old.m_data), m_size(old.m_size) {
+        old.m_data = nullptr;
+    }
+
+    auto memory_mapping::operator=(memory_mapping &&old) noexcept -> memory_mapping & {
+        if (this == &old) return *this;
+
+        m_data = old.m_data;
+        m_size = old.m_size;
+
+        old.m_data = nullptr;
+
+        return *this;
+    }
+
     memory_mapping::memory_mapping(const std::string_view &filename) {
 #ifdef TSUN_COMMON_HAVE_MMAP_
         struct stat file_stat = {};
@@ -30,7 +46,7 @@ namespace tsun_common {
 
     memory_mapping::~memory_mapping() {
 #ifdef TSUN_COMMON_HAVE_MMAP_
-        munmap(m_data, m_size);
+        if (m_data != nullptr) munmap(m_data, m_size);
 #endif
     }
 } // namespace tsun_common
